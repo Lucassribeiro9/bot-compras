@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+    bot-compras:
+        build: .
+        container_name: bot-compras
+        env_file: .env
+        volumes:
+            - .:/app
+        
