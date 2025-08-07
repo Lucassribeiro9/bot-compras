@@ -1,10 +1,11 @@
 from webscraper import buscar_preco
 from notifier_telegram import send_message
 import dotenv
+import os
 dotenv.load_dotenv()
 
-URL = "https://www.kabum.com.br/produto/904276/console-sony-playstation-5-slim-edicao-digital-ssd-1tb-controle-sem-fio-dualsense-2-jogos-digitais"
-TARGET_PRICE = 3500
+URL = os.getenv("URL_PRODUTO")
+TARGET_PRICE = os.getenv("PRECO_ALVO")
 
 def check_price():
     print("Verificando o preço do produto...")

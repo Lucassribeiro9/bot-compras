@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
-
+import os
 
 def format_price(price: str) -> float:
     # Recebe um preço limpo
@@ -53,7 +53,7 @@ def buscar_preco(url: str) -> float | None:
 
 
 if __name__ == "__main__":
-    TEST_URL = "https://www.kabum.com.br/produto/904276/console-sony-playstation-5-slim-edicao-digital-ssd-1tb-controle-sem-fio-dualsense-2-jogos-digitais"
+    TEST_URL = os.getenv("URL_PRODUTO")
     price = buscar_preco(TEST_URL)
     if price is not None:
         print(f"\n✅ SUCESSO! O preço final extraído é: R${price:.2f}")
