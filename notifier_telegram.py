@@ -3,13 +3,13 @@ import dotenv
 import os
 dotenv.load_dotenv()
 
-TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
 MESSAGE = "Testando o bot"
 
 def send_message(message):
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload = {"chat_id": CHAT_ID, "text": message, "parse_mode": "Markdown"}
     print("Enviando notificação para o Telegram...")
     try:
