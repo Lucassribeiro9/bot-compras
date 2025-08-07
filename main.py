@@ -5,7 +5,8 @@ import os
 dotenv.load_dotenv()
 
 URL = os.getenv("URL_PRODUTO")
-TARGET_PRICE = os.getenv("PRECO_ALVO")
+TARGET_PRICE_str = os.getenv("PRECO_ALVO")
+TARGET_PRICE = float(TARGET_PRICE_str) if TARGET_PRICE_str else None
 
 def check_price():
     print("Verificando o preço do produto...")
