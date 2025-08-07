@@ -3,6 +3,8 @@ version: '3.8'
 services:
     bot-compras:
         build: .
+        # imagem para subir no dockerhub
+        image: lucassribeiro9/bot-compras:latest
         container_name: bot-compras
         env_file: .env
         volumes:
