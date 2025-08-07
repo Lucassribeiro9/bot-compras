@@ -43,14 +43,10 @@ ENV/
 .git/
 .gitignore
 
-# Arquivos de configuração local
-*.local
-
-# Diretórios de cache
-.cache/
-.pytest_cache/
-.mypy_cache/
-
 # Arquivos de sistema
 .DS_Store
 Thumbs.db
+
+# Docker
+Dockerfile
+docker-compose.yml
