@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from notifier_telegram import send_message
+from notifier-telegram import send_message
 
 
 class TestNotifier(unittest.TestCase):
