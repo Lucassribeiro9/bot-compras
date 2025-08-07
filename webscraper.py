@@ -43,8 +43,8 @@ def buscar_preco(url: str) -> float | None:
 
 
 if __name__ == "__main__":
-    test_url = "https://www.kabum.com.br/produto/904276/console-sony-playstation-5-slim-edicao-digital-ssd-1tb-controle-sem-fio-dualsense-2-jogos-digitais"
-    price = buscar_preco(test_url)
+    TEST_URL = "https://www.kabum.com.br/produto/904276/console-sony-playstation-5-slim-edicao-digital-ssd-1tb-controle-sem-fio-dualsense-2-jogos-digitais"
+    price = buscar_preco(TEST_URL)
     if price is not None:
         print(f"\n✅ SUCESSO! O preço final extraído é: R${price:.2f}")
     else:

@@ -3,8 +3,8 @@ import dotenv
 import os
 dotenv.load_dotenv()
 
-token = os.getenv("BOT_TOKEN")
-chat_id = os.getenv("CHAT_ID")
+TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
 
 MESSAGE = "Testando o bot"
 
@@ -23,5 +23,5 @@ def send_message(token, chat_id, message):
 
 # Executando a função
 if __name__ == "__main__":
-    send_message(token, chat_id, MESSAGE)
+    send_message(TOKEN, CHAT_ID, MESSAGE)
         
