@@ -1,5 +1,5 @@
 from webscraper import buscar_preco
-from test_telegram import send_message
+from notifier_telegram import send_message
 import dotenv
 dotenv.load_dotenv()
 
