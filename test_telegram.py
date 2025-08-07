@@ -8,9 +8,9 @@ CHAT_ID = os.getenv("CHAT_ID")
 
 MESSAGE = "Testando o bot"
 
-def send_message(token, chat_id, message):
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
-    payload = {"chat_id": chat_id, "text": message, "parse_mode": "Markdown"}
+def send_message(message):
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    payload = {"chat_id": CHAT_ID, "text": message, "parse_mode": "Markdown"}
     print("Enviando notificação para o Telegram...")
     try:
         response = requests.post(url, data=payload)
@@ -23,5 +23,5 @@ def send_message(token, chat_id, message):
 
 # Executando a função
 if __name__ == "__main__":
-    send_message(TOKEN, CHAT_ID, MESSAGE)
+    send_message(MESSAGE)
         
