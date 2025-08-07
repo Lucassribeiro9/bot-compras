@@ -3,6 +3,16 @@ from bs4 import BeautifulSoup
 import re
 
 
+def format_price(price: str) -> float:
+    # Recebe um preço limpo
+    if not price:
+        return None
+    clean_price = re.sub(r"[^\d,]", "", price).replace(",", ".")
+    if not clean_price:
+        print("Não foi possível extrair um número válido do preço.")
+        return None
+    return float(clean_price)
+
 def buscar_preco(url: str) -> float | None:
     print(f"Buscando o preço do produto no site: {url}")
 
@@ -27,11 +37,11 @@ def buscar_preco(url: str) -> float | None:
         price_text = price.get_text(strip=True)
         print(f"Preço encontrado: {price_text}")
 
-        clean_price = re.sub(r"[^\d,]", "", price_text).replace(",", ".")
-        if not clean_price:
-            print("Não foi possível extrair um número válido do preço.")
+
+        final_price = format_price(price_text)
+        if final_price is None:
+            print("Não foi possível formatar o preço.")
             return None
-        final_price = float(clean_price)
         print(f"Preço final: {final_price}")
         return final_price
     except requests.exceptions.RequestException as e:
