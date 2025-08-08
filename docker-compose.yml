@@ -1,12 +1,23 @@
-version: '3.8'
+# Criando docker-compose para o bot de compras
 
+# Este arquivo docker-compose.yml define os serviços necessários para rodar o bot de compras.
+# Ele inclui a construção da imagem do bot, configuração de variáveis de ambiente e volumes.
+
+# versão do docker-compose
+version: "3.8"
+
+# serviços que serão executados
 services:
-    bot-compras:
-        build: .
-        # imagem para subir no dockerhub
-        image: ${USER_DOCKERHUB}/bot-compras:latest
-        container_name: bot-compras
-        env_file: .env
-        volumes:
-            - .:/app
-        
+  # Nome do serviço
+  bot-compras:
+    # Build da imagem
+    build: .
+    # imagem para subir no dockerhub (usuario/nome-da-imagem:tag)
+    image: ${USER_DOCKERHUB}/bot-compras:latest
+    # Nome do container
+    container_name: bot-compras
+    # Arquivo .env
+    env_file: .env
+    # Volumes para persistência de dados
+    volumes:
+      - .:/app
