@@ -1,10 +1,12 @@
+import os
+import re
+
 import requests
 from bs4 import BeautifulSoup
-import re
-import os
+
 
 def format_price(price: str) -> float:
-    # Recebe um preço limpo
+    # Recebe um preço e tenta extrair o valor numérico dele.
     if not price:
         return None
     clean_price = re.sub(r"[^\d,]", "", price).replace(",", ".")
@@ -13,7 +15,9 @@ def format_price(price: str) -> float:
         return None
     return float(clean_price)
 
+
 def buscar_preco(url: str) -> float | None:
+    # Busca o preço do produto no site indicado.
     print(f"Buscando o preço do produto no site: {url}")
 
     HEADERS = {
@@ -23,21 +27,20 @@ def buscar_preco(url: str) -> float | None:
     try:
         page = requests.get(url, headers=HEADERS)
         page.raise_for_status()
-
+        # Verifica onde o preço está localizado na página
         soup = BeautifulSoup(page.content, "html.parser")
         class_css = "text-4xl text-secondary-500 font-bold transition-all duration-500"
-        price = soup.find(
-            "h4",
-            class_=class_css
-        )
+        price = soup.find("h4", class_=class_css)
 
         if not price:
-            print("Preço não encontrado no site. Nada encontrado na classe: {class_css}")
+            print(
+                "Preço não encontrado no site. Nada encontrado na classe: {class_css}"
+            )
             return None
         price_text = price.get_text(strip=True)
         print(f"Preço encontrado: {price_text}")
 
-
+        # Formata o preço encontrado
         final_price = format_price(price_text)
         if final_price is None:
             print("Não foi possível formatar o preço.")
@@ -52,6 +55,7 @@ def buscar_preco(url: str) -> float | None:
         return None
 
 
+# Executando a função de busca de preço com uma URL de teste
 if __name__ == "__main__":
     TEST_URL = os.getenv("URL_PRODUTO")
     price = buscar_preco(TEST_URL)
