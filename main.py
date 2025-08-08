@@ -1,14 +1,21 @@
-from webscraper import buscar_preco
-from notifier_telegram import send_message
-import dotenv
+# arquivo principal
 import os
+
+import dotenv
+
+from notifier_telegram import send_message
+from webscraper import buscar_preco
+
 dotenv.load_dotenv()
 
+# constantes
 URL = os.getenv("URL_PRODUTO")
 TARGET_PRICE_str = os.getenv("PRECO_ALVO")
 TARGET_PRICE = float(TARGET_PRICE_str) if TARGET_PRICE_str else None
 
+
 def check_price():
+    # verifica se o preço do produto atingiu o valor alvo e envia notificação
     print("Verificando o preço do produto...")
     price = buscar_preco(URL)
     if price is not None:
@@ -34,5 +41,7 @@ def check_price():
 
     print("Verificação concluída.")
 
+
+# Executando a verificação de preço
 if __name__ == "__main__":
     check_price()
