@@ -1,6 +1,6 @@
 # 🛒 Bot de Compras
 
-[![CI/CD](https://github.com/Lucassribeiro9/bot-compras/actions/workflows/scheduled_run.yml/badge.svg)
+![CI/CD](https://github.com/Lucassribeiro9/bot-compras/actions/workflows/scheduled_run.yml/badge.svg)
 
 Este projeto é um bot automatizado para **monitoramento de preços**.
 Ele acompanha o valor de um produto em um site e envia **alertas no Telegram** assim que o preço desejado é atingido.
