@@ -1,69 +1,102 @@
-# Bot de Compras
+# 🛒 Bot de Compras
 
-O projeto consiste em criar um bot automatizado que monitora preços de produtos em um site e envia alertas quando o preço desejado é atingido. Ideal para aqueles que querem economizar e comprar no momento certo. Esse projeto servirá de exemplo para aplicações futuras. O intuito no começo era apenas criar o bot, mas como ele está servindo também como estudo para aprimorar minhas habilidades com Python e simular um projeto real, fiz desde a criação do bot à construção do ecossistema por completo, usando Docker e o Github Actions para realizar o CI/CD.
+[![CI/CD](https://github.com/Lucassribeiro9/bot-compras/actions/workflows/main.yml/badge.svg)](https://github.com/Lucassribeiro9/bot-compras/actions/workflows/main.yml)
 
-## Funcionalidades
+Este projeto é um bot automatizado para **monitoramento de preços**.
+Ele acompanha o valor de um produto em um site e envia **alertas no Telegram** assim que o preço desejado é atingido.
 
-- Monitora o preço de produtos em uma URL específica.
-- Compara o preço atual com um preço alvo definido pelo usuário.
-- Envia notificações via Telegram quando o preço alvo é atingido.
-- Executa verificações de preço em intervalos programados.
+O objetivo inicial era criar apenas o bot, mas o projeto evoluiu para um **estudo prático de Python**, **Docker** e **GitHub Actions** (CI/CD), simulando um fluxo completo de desenvolvimento e implantação.
 
-## Tecnologias Utilizadas
+---
 
-- **Python**: Linguagem utilizada para a criação do algoritmo.
-- **BeautifulSoup**: Para scraping de dados da web.
-- **Requests**: Para fazer requisições HTTP.
-- **Python-dotenv**: Para gerenciar variáveis de ambiente.
-- **Docker**: Para gerar a imagem Docker e executar o ambiente de execução.
-- **Telegram API**: Para envio de notificações.
+## ✨ Funcionalidades
 
-## Configuração
+- 🔍 **Monitoramento de preços** a partir de uma URL específica.
+- 🎯 **Comparação automática** com o preço-alvo definido pelo usuário.
+- 📲 **Notificações no Telegram** quando o preço for igual ou menor ao alvo.
+- ⏳ **Execução periódica** com intervalo configurável (padrão: a cada 8h).
 
-1. Clone o repositório:
+---
 
-   ```bash
-   git clone https://github.com/seu-usuario/bot-compras.git
-   ```
+## 🛠 Tecnologias Utilizadas
 
-2. Instale as dependências:
+- **[Python](https://www.python.org/)** → Lógica principal e manipulação de dados.
+- **[BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/)** → Web scraping para extrair informações.
+- **[Requests](https://docs.python-requests.org/)** → Requisições HTTP para acessar páginas.
+- **[python-dotenv](https://pypi.org/project/python-dotenv/)** → Gerenciamento de variáveis de ambiente.
+- **[Docker](https://www.docker.com/)** → Containerização para execução isolada.
+- **[Telegram Bot API](https://core.telegram.org/bots/api)** → Envio de alertas diretamente para o chat.
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+---
 
-3. Crie um arquivo `.env` na raiz do projeto e configure as variáveis de ambiente. Para as demais constantes, recomendo criar um arquivo `config.py` ou `consts.py`. Caso precise de uma referência para o `.env`, veja o `.env-example` também.
+## ⚙️ Configuração
 
-   ```python
-   BOT_TOKEN=seu_token_do_telegram
-   CHAT_ID=seu_chat_id_do_telegram
-   URL_PRODUTO=url_do_produto
-   PRECO_ALVO=preco_desejado
-   ```
+### 1️⃣ Clonar o repositório
 
-4. Execute o bot:
+```bash
+git clone https://github.com/Lucassribeiro9/bot-compras.git
+cd bot-compras
+```
 
-   ```bash
-   python main.py
-   ```
+### 2️⃣ Instalar dependências
 
-5. (Opcional) Construa a imagem Docker e execute-a:
+```bash
+pip install -r requirements.txt
+```
 
-   ```bash
-   docker build -t bot-compras .
-   docker run -d --name bot-compras bot-compras
-   ```
+### 3️⃣ Criar e configurar o `.env`
 
-6. (Opcional) Execute o bot usando Docker-Compose:
-   ```bash
-   docker-compose up
-   ```
+Crie um arquivo `.env` na raiz do projeto com o seguinte conteúdo:
 
-## Uso
+> Veja o `.env-example` para referência.
 
-- O bot irá verificar o preço do produto na URL especificada e enviar uma notificação para o Telegram se o preço atingir ou for menor que o preço alvo.
-- As verificações são realizadas a cada 8 horas por padrão, mas podem ser ajustadas no arquivo de workflow do GitHub Actions.
+```python
+BOT_TOKEN=seu_token_do_telegram
+CHAT_ID=seu_chat_id_do_telegram
+URL_PRODUTO=url_do_produto
+PRECO_ALVO=preco_desejado
+```
 
-## Contribuição
+> Para constantes adicionais, utilize um arquivo `config.py` ou `consts.py`.
 
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
+### 4️⃣ Executar o bot localmente
+
+```bash
+python main.py
+```
+
+### 5️⃣ (Opcional) Executar com Docker
+
+```bash
+docker build -t bot-compras .
+docker run -d --name bot-compras bot-compras
+```
+
+### 6️⃣ (Opcional) Executar com Docker Compose
+
+```bash
+docker-compose up -d
+```
+
+---
+
+## 🚀 Uso
+
+- O bot verifica o preço do produto e envia **notificação no Telegram** quando ele atingir ou ficar abaixo do valor definido.
+- Intervalo padrão de execução: **8 horas** (configurável no workflow do GitHub Actions).
+
+---
+
+## 📌 Melhorias Futuras
+
+- 📈 **Aumentar o catálogo de sites e produtos** monitorados.
+- 🖥 **Usar Selenium** para aprimorar a busca e automação, permitindo lidar com páginas dinâmicas.
+- 🧩 **Implementar arquitetura de microsserviços** para modularizar e escalar a aplicação.
+- 🌥 **Rodar a aplicação em máquinas virtuais** na nuvem, como AWS EC2 ou Google Cloud Platform.
+
+---
+
+## 🤝 Contribuição
+
+Contribuições são **bem-vindas**!
+Abra uma **issue** para discutir melhorias ou envie um **pull request** com alterações sugeridas.
