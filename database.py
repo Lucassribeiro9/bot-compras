@@ -1,4 +1,9 @@
 import sqlite3
+import os
+from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
 
 DB = "products.db"
 
@@ -32,9 +37,6 @@ def setup_db():
     finally:
         conn.close()
 
-if __name__ == "__main__":
-    setup_db()
-
 def add_product(url: str, target_price: float, chat_id: int):
     """ Adiciona um produto ao banco de dados """
     conn = get_conn()
@@ -60,3 +62,25 @@ def list_products():
         print(f"Erro ao listar produtos: {e}")
     finally:
         conn.close()
+
+def update_product(product_id: int, new_price: float):
+    conn = get_conn()
+    try:
+        cursor = conn.cursor()
+        now_time = datetime.now()
+        cursor.execute("UPDATE products SET last_price = ?, last_checked = ? WHERE id = ?", (new_price, now_time, product_id))
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"Erro ao atualizar produto: {e}")
+    finally:
+        conn.close()
+
+
+if __name__ == "__main__":
+    setup_db()
+    print("Adicionando produto de teste")
+    add_product(
+        url="https://www.kabum.com.br/produto/644441/monitor-gamer-curvo-msi-mag-27-fhd-280hz-0-5ms-va-adaptive-sync-dp-e-hdmi-hdr-preto-276cxf",
+        target_price=1000,
+        chat_id=os.getenv("CHAT_ID")
+    )
