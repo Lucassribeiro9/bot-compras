@@ -34,3 +34,16 @@ def setup_db():
 
 if __name__ == "__main__":
     setup_db()
+
+def add_product(url: str, target_price: float, chat_id: int):
+    """ Adiciona um produto ao banco de dados """
+    conn = get_conn()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO products (url, target_price, chat_id) VALUES (?, ?, ?)", (url, target_price, chat_id))
+        conn.commit()
+        print(f"Produto adicionado: {url}")
+    except sqlite3.IntegrityError:
+        print(f"Erro ao adicionar produto: URL {url} já existente")
+    finally:
+        conn.close()
