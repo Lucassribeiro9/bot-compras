@@ -77,10 +77,11 @@ def update_product(product_id: int, new_price: float):
 
 
 if __name__ == "__main__":
+    CHAT_ID = os.getenv("CHAT_ID")
     setup_db()
     print("Adicionando produto de teste")
     add_product(
-        url="https://www.kabum.com.br/produto/644441/monitor-gamer-curvo-msi-mag-27-fhd-280hz-0-5ms-va-adaptive-sync-dp-e-hdmi-hdr-preto-276cxf",
-        target_price=1000,
-        chat_id=os.getenv("CHAT_ID")
+        url="https://www.kabum.com.br/produto/904276/console-sony-playstation-5-slim-edicao-digital-ssd-1tb-controle-sem-fio-dualsense-2-jogos-digitais",
+        target_price=3300,
+        chat_id=CHAT_ID
     )
