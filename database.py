@@ -47,3 +47,16 @@ def add_product(url: str, target_price: float, chat_id: int):
         print(f"Erro ao adicionar produto: URL {url} já existente")
     finally:
         conn.close()
+
+def list_products():
+    """ Lista todos os produtos do banco de dados """
+    conn = get_conn()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM products")
+        products = cursor.fetchall()
+        return products
+    except sqlite3.Error as e:
+        print(f"Erro ao listar produtos: {e}")
+    finally:
+        conn.close()
