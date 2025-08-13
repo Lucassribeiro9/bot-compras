@@ -163,4 +163,4 @@ cython_debug/
 .trunk
 
 # Database
-.db
+*.db
