@@ -1,14 +1,10 @@
 import requests
 import re
 from bs4 import BeautifulSoup
-
+from config import HEADERS
 
 def get_product_info(url: str, config: dict) -> dict | None:
     # Busca os dados do produto em sites estáticos.
-    HEADERS = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
-    }
-
     try:
         page = requests.get(url, headers=HEADERS)
         page.raise_for_status()

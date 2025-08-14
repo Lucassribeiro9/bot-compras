@@ -1,11 +1,11 @@
 import sqlite3
 import os
+from config import DB
 from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
 
-DB = "products.db"
 CHAT_ID = os.getenv("CHAT_ID")
 
 
