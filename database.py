@@ -76,6 +76,7 @@ def list_products():
 
 
 def update_product(product_id: int, new_price: float):
+    """Atualiza o preço do produto no banco de dados"""
     conn = get_conn()
     try:
         cursor = conn.cursor()
