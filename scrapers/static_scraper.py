@@ -2,6 +2,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from config import HEADERS
+from utils import format_price
 
 def get_product_info(url: str, config: dict) -> dict | None:
     # Busca os dados do produto em sites estáticos.
@@ -26,11 +27,10 @@ def get_product_info(url: str, config: dict) -> dict | None:
         
         # Formata o preço
         price_text = price_element.get_text(strip=True)
-        clean_price = re.sub(r"[^\d,]", "", price_text).replace(",", ".")
-        if clean_price:
-            final_price = float(clean_price) 
-        else:
-            final_price = None
+        final_price = format_price(price_text)
+        if final_price is None:
+            print("Não foi possível formatar o preço.")
+            return None
         product_name = name_element.get_text(strip=True)
         if product_name and final_price is not None:
             return {
