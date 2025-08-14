@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DB = "products.db"
+CHAT_ID = os.getenv("CHAT_ID")
 
 def get_conn():
     """ Criando conexão com o banco de dados """
@@ -23,6 +24,7 @@ def setup_db():
                        CREATE TABLE IF NOT EXISTS products (
                            id INTEGER PRIMARY KEY AUTOINCREMENT,
                            url TEXT NOT NULL UNIQUE,
+                           name TEXT NOT NULL,
                            target_price REAL NOT NULL,
                            last_price REAL,
                            chat_id INTEGER NOT NULL,
@@ -42,7 +44,7 @@ def add_product(url: str, target_price: float, chat_id: int):
     conn = get_conn()
     try:
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO products (url, target_price, chat_id) VALUES (?, ?, ?)", (url, target_price, chat_id))
+        cursor.execute("INSERT INTO products (url, name, target_price, chat_id) VALUES (?, ?, ?)", (url, target_price, chat_id))
         conn.commit()
         print(f"Produto adicionado: {url}")
     except sqlite3.IntegrityError:
@@ -77,7 +79,6 @@ def update_product(product_id: int, new_price: float):
 
 
 if __name__ == "__main__":
-    CHAT_ID = os.getenv("CHAT_ID")
     setup_db()
     print("Adicionando produto de teste")
     add_product(
