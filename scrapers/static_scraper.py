@@ -23,7 +23,6 @@ def get_product_info(url: str, config: dict) -> dict | None:
             print("Não foi possível encontrar o preço ou o nome do produto.")
             return None
 
-        # Formata o preço
         price_text = price_element.get_text(strip=True)
         final_price = format_price(price_text)
         if final_price is None:
