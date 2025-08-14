@@ -1,8 +1,11 @@
+import os
 import requests
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 from config import HEADERS
 from utils import format_price
 
+load_dotenv()
 
 def get_product_info(url: str, config: dict) -> dict | None:
     # Busca os dados do produto em sites estáticos.
@@ -38,3 +41,16 @@ def get_product_info(url: str, config: dict) -> dict | None:
     except Exception as e:
         print(f"Ocorreu um erro inesperado na extração de dados da URL {url}: {e}")
         return None
+
+if __name__ == "__main__":
+    print("Testando o static de forma isolada...")
+    url = os.getenv("URL_PRODUTO")
+    config_url = {
+        "name": ["h1", {"class": "text-sm desktop:text-xl text-black-800 font-bold desktop:font-bold"}],
+        "price": ["h4", {"class": "text-4xl text-secondary-500 font-bold transition-all duration-500"}],
+    }
+    product_info = get_product_info(url, config_url)
+    if product_info:
+        print(f"\n✅ SUCESSO! Informações do produto: {product_info}")
+    else:
+        print("\n❌ FALHA! Não foi possível obter as informações.")
