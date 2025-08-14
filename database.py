@@ -8,19 +8,22 @@ load_dotenv()
 DB = "products.db"
 CHAT_ID = os.getenv("CHAT_ID")
 
+
 def get_conn():
-    """ Criando conexão com o banco de dados """
+    """Criando conexão com o banco de dados"""
     conn = sqlite3.connect(DB)
     conn.row_factory = sqlite3.Row
     return conn
 
+
 def setup_db():
-    """ Criando a tabela de produtos caso ela não exista """
+    """Criando a tabela de produtos caso ela não exista"""
     print("Configurando o banco de dados...")
     conn = get_conn()
     try:
         cursor = conn.cursor()
-        cursor.execute("""
+        cursor.execute(
+            """
                        CREATE TABLE IF NOT EXISTS products (
                            id INTEGER PRIMARY KEY AUTOINCREMENT,
                            url TEXT NOT NULL UNIQUE,
@@ -31,7 +34,8 @@ def setup_db():
                            last_checked TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                        );
-        """)
+        """
+        )
         conn.commit()
         print("Banco de dados configurado com sucesso!")
     except sqlite3.Error as e:
@@ -39,12 +43,16 @@ def setup_db():
     finally:
         conn.close()
 
-def add_product(url: str, target_price: float, chat_id: int):
-    """ Adiciona um produto ao banco de dados """
+
+def add_product(url: str, name: str, target_price: float, chat_id: int):
+    """Adiciona um produto ao banco de dados"""
     conn = get_conn()
     try:
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO products (url, name, target_price, chat_id) VALUES (?, ?, ?)", (url, target_price, chat_id))
+        cursor.execute(
+            "INSERT INTO products (url, name, target_price, chat_id) VALUES (?, ?, ?, ?)",
+            (url, name, target_price, chat_id),
+        )
         conn.commit()
         print(f"Produto adicionado: {url}")
     except sqlite3.IntegrityError:
@@ -52,8 +60,9 @@ def add_product(url: str, target_price: float, chat_id: int):
     finally:
         conn.close()
 
+
 def list_products():
-    """ Lista todos os produtos do banco de dados """
+    """Lista todos os produtos do banco de dados"""
     conn = get_conn()
     try:
         cursor = conn.cursor()
@@ -65,12 +74,16 @@ def list_products():
     finally:
         conn.close()
 
+
 def update_product(product_id: int, new_price: float):
     conn = get_conn()
     try:
         cursor = conn.cursor()
         now_time = datetime.now()
-        cursor.execute("UPDATE products SET last_price = ?, last_checked = ? WHERE id = ?", (new_price, now_time, product_id))
+        cursor.execute(
+            "UPDATE products SET last_price = ?, last_checked = ? WHERE id = ?",
+            (new_price, now_time, product_id),
+        )
         conn.commit()
     except sqlite3.Error as e:
         print(f"Erro ao atualizar produto: {e}")
@@ -80,9 +93,19 @@ def update_product(product_id: int, new_price: float):
 
 if __name__ == "__main__":
     setup_db()
-    print("Adicionando produto de teste")
+    print("Adicionando produtos de teste...")
+    # Playstation 5 Slim
     add_product(
         url="https://www.kabum.com.br/produto/904276/console-sony-playstation-5-slim-edicao-digital-ssd-1tb-controle-sem-fio-dualsense-2-jogos-digitais",
+        name="Playstation 5 Slim",
         target_price=3300,
-        chat_id=CHAT_ID
+        chat_id=CHAT_ID,
     )
+    # Camiseta Adidas
+    add_product(
+        url="https://www.adidas.com.br/camiseta-dog-plane-genero-neutro/JD2830.html",
+        name="Camiseta Dog Plane - Adidas",
+        target_price=130,
+        chat_id=CHAT_ID,
+    )
+    print("Produtos adicionados com sucesso!")
