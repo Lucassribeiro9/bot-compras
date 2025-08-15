@@ -1,6 +1,6 @@
 import sqlite3
 import os
-from config import DB
+from settings import DB
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -104,9 +104,9 @@ if __name__ == "__main__":
     )
     # Camiseta Adidas
     add_product(
-        url="https://www.adidas.com.br/camiseta-dog-plane-genero-neutro/JD2830.html",
-        name="Camiseta Dog Plane - Adidas",
-        target_price=130,
+        url="https://www.intheboxperfumes.com.br/produto/envoy-100ml-197",
+        name="Envoy - 100ml",
+        target_price=140,
         chat_id=CHAT_ID,
     )
     print("Produtos adicionados com sucesso!")
