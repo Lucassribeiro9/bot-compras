@@ -10,13 +10,13 @@ load_dotenv()
 def get_product_info(url: str, config: dict) -> dict | None:
     # Busca os dados do produto em sites estáticos.
     try:
-        page = requests.get(url, headers=HEADERS)
+        page = requests.get(url, headers=HEADERS, timeout=10)
         page.raise_for_status()
         soup = BeautifulSoup(page.content, "html.parser")
 
         # Seletores da configuração
-        price_tag, price_attr = config["price"]
-        name_tag, name_attr = config["name"]
+        price_tag, price_attr = config["price_selector"]
+        name_tag, name_attr = config["name_selector"]
 
         # Procura os elementos
         price_element = soup.find(price_tag, price_attr)
@@ -44,10 +44,10 @@ def get_product_info(url: str, config: dict) -> dict | None:
 
 if __name__ == "__main__":
     print("Testando o static de forma isolada...")
-    url = os.getenv("URL_PRODUTO")
+    url = "https://www.kabum.com.br/produto/904276/console-sony-playstation-5-slim-edicao-digital-ssd-1tb-controle-sem-fio-dualsense-2-jogos-digitais"
     config_url = {
-        "name": ["h1", {"class": "text-sm desktop:text-xl text-black-800 font-bold desktop:font-bold"}],
-        "price": ["h4", {"class": "text-4xl text-secondary-500 font-bold transition-all duration-500"}],
+        "name_selector": ["h1", {"class": "text-sm desktop:text-xl text-black-800 font-bold desktop:font-bold"}],
+        "price_selector": ["h4", {"class": "text-4xl text-secondary-500 font-bold transition-all duration-500"}],
     }
     product_info = get_product_info(url, config_url)
     if product_info:
