@@ -13,9 +13,14 @@ SITE_CONFIG = {
         "name_selector": ("h1", {"class": "text-sm desktop:text-xl text-black-800 font-bold desktop:font-bold"}),
         "price_selector": ("h4", {"class": "text-4xl text-secondary-500 font-bold transition-all duration-500"}),
     },
-    "adidas.com.br": {
+    "intheboxperfumes.com.br": {
         "strategy: dynamic",
-        "name_selector": ("span", {"class": "text-sm desktop:text-xl text-black-800 font-bold desktop:font-bold"}),
-        "price_selector": ("span", {"class": "_sale-color_1dbqy_98"}),
+        "name_selector": ("h1", {class="name"}),
+        "price_selector": ("span", {class="cmp-price-price"}),
     },
+    "nike.com.br": {
+        "strategy": "dynamic",
+        "name_selector": ("h1", {"data-testid": "product-name"}),
+        "price_selector": ("span", {"data-testid": "main-price"}),
+    }
 }
