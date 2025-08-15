@@ -1,5 +1,4 @@
-
-from scrapers import static_scraper, dynamic_scraper    
+from scrapers import static_scraper, dynamic_scraper
 from settings import SITE_CONFIG
 
 
@@ -24,16 +23,16 @@ def get_product_info(url: str) -> dict | None:
 # Executando a função de busca de preço com uma URL de teste
 if __name__ == "__main__":
     print("Testando o webscraper de forma isolada...")
-    dynamic_url = "https://www.intheboxperfumes.com.br/produto/envoy-100ml-197"
-    static_url = "https://www.kabum.com.br/produto/904276/console-sony-playstation-5-slim-edicao-digital-ssd-1tb-controle-sem-fio-dualsense-2-jogos-digitais"
+    DYNAMIC_URL = "https://www.intheboxperfumes.com.br/produto/envoy-100ml-197"
+    STATIC_URL = "https://www.kabum.com.br/produto/904276/console-sony-playstation-5-slim-edicao-digital-ssd-1tb-controle-sem-fio-dualsense-2-jogos-digitais"
     print("Testando url estática")
-    static_info = get_product_info(static_url)
+    static_info = get_product_info(STATIC_URL)
     if static_info:
         print(f"\n✅ SUCESSO! Informações do produto: {static_info}")
     else:
         print("\n❌ FALHA! Não foi possível obter as informações.")
     print("Testando url dinâmica")
-    dynamic_info = get_product_info(dynamic_url)
+    dynamic_info = get_product_info(DYNAMIC_URL)
     if dynamic_info:
         print(f"\n✅ SUCESSO! Informações do produto: {dynamic_info}")
     else:
