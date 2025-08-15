@@ -2,7 +2,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from config import HEADERS
+from settings import HEADERS
 from utils import format_price
 
 load_dotenv()
