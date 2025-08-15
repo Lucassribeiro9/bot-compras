@@ -9,26 +9,23 @@ from selenium.common.exceptions import NoSuchElementException
 
 def get_product_info(url: str, config: dict) -> dict | None:
     # Busca os dados do produto em sites dinâmicos.
-
-    # Configuração do driver do Chrome
     service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service)
-    driver.get(url)
-    time.sleep(5)
-
-    # Rodando no modo "headless"
     options = webdriver.ChromeOptions()
     options.add_argument("headless")
     options.add_argument("disable-gpu")
     options.add_argument("no-sandbox")
     options.add_argument("disable-dev-shm-usage")
+    options.add_argument("disable-blink-features=AutomationControlled")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option("useAutomationExtension", False)
     # Iniciando navegador com as novas opções
     driver = webdriver.Chrome(service=service, options=options)
     try:
         driver.get(url)
-        print("Aguardando a página carregar...")
-        time.sleep(5)
-    
+        driver.execute_cdp_cmd("Network.setUserAgentOverride", {"userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"})
+        wait_time = config.get("wait_time", 5)
+        print(f"Aguardando {wait_time} segundos para a página carregar...")
+        time.sleep(wait_time)
         # Extraindo dados
         name_selector_css = config["name_selector"]
         price_selector_css = config["price_selector"]
@@ -45,9 +42,11 @@ def get_product_info(url: str, config: dict) -> dict | None:
         
         # Formata o preço
         final_price = format_price(price_text)
-        if final_price is None:
+        if name_text and final_price is not None:
             return{"name": name_text, "price": final_price}
-        return None
+        else:
+            print("Não foi possível extrair o nome ou o preço do produto.")
+            return None
     except NoSuchElementException:
         print("Elemento não encontrado")
         return None
@@ -60,12 +59,12 @@ def get_product_info(url: str, config: dict) -> dict | None:
 
 if __name__ == "__main__":
     print("Testando o dynamic de forma isolada...")
-    URL = "https://www.adidas.com.br/camiseta-dog-plane-genero-neutro/JD2830.html"
+    URL = "https://www.intheboxperfumes.com.br/produto/envoy-100ml-197"
     config_url = {
         "strategy": "dynamic",
-        "name_selector": 'h1[data-testid="product-title"]',
-        "price_selector": 'div[data-testid="main-price"]',
-        "wait_time": 5
+        "name_selector": 'h1[class="name"]',
+        "price_selector": 'span[class="cmp-price-price"]',
+        "wait_time": 5,
     }
     product_info = get_product_info(URL, config_url)
     if product_info:
