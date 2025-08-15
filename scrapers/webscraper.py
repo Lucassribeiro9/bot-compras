@@ -1,52 +1,40 @@
-import os
-import re
-import requests
-from bs4 import BeautifulSoup
 
-def buscar_preco(url: str) -> float | None:
-    # Busca o preço do produto no site indicado.
-    print(f"Buscando o preço do produto no site: {url}")
+from scrapers import static_scraper, dynamic_scraper    
+from settings import SITE_CONFIG
 
-    HEADERS = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
-    }
 
-    try:
-        page = requests.get(url, headers=HEADERS)
-        page.raise_for_status()
-        # Verifica onde o preço está localizado na página
-        soup = BeautifulSoup(page.content, "html.parser")
-        class_css = "text-4xl text-secondary-500 font-bold transition-all duration-500"
-        price = soup.find("h4", class_=class_css)
-
-        if not price:
-            print(
-                "Preço não encontrado no site. Nada encontrado na classe: {class_css}"
-            )
-            return None
-        price_text = price.get_text(strip=True)
-        print(f"Preço encontrado: {price_text}")
-
-        # Formata o preço encontrado
-        final_price = format_price(price_text)
-        if final_price is None:
-            print("Não foi possível formatar o preço.")
-            return None
-        print(f"Preço final: {final_price}")
-        return final_price
-    except requests.exceptions.RequestException as e:
-        print(f"Erro ao buscar o preço: {e}")
+def get_product_info(url: str) -> dict | None:
+    # Busca as informações do produto
+    domain = next((d for d in SITE_CONFIG if d in url), None)
+    if not domain:
+        print(f"URL inválida: {url}")
         return None
-    except Exception as e:
-        print(f"Ocorreu um erro inesperado: {e}")
-        return None
+
+    config = SITE_CONFIG[domain]
+    strategy = config["strategy"]
+    print(f"Usando a estratégia {strategy} para verificar domínio {domain}")
+    if strategy == "static":
+        return static_scraper.get_product_info(url, config)
+    elif strategy == "dynamic":
+        return dynamic_scraper.get_product_info(url, config)
+    print(f"Estratégia {strategy} não suportada para o domínio {domain}")
+    return None
 
 
 # Executando a função de busca de preço com uma URL de teste
 if __name__ == "__main__":
-    TEST_URL = os.getenv("URL_PRODUTO")
-    price = buscar_preco(TEST_URL)
-    if price is not None:
-        print(f"\n✅ SUCESSO! O preço final extraído é: R${price:.2f}")
+    print("Testando o webscraper de forma isolada...")
+    dynamic_url = "https://www.intheboxperfumes.com.br/produto/envoy-100ml-197"
+    static_url = "https://www.kabum.com.br/produto/904276/console-sony-playstation-5-slim-edicao-digital-ssd-1tb-controle-sem-fio-dualsense-2-jogos-digitais"
+    print("Testando url estática")
+    static_info = get_product_info(static_url)
+    if static_info:
+        print(f"\n✅ SUCESSO! Informações do produto: {static_info}")
     else:
-        print("\n❌ FALHA! Não foi possível obter o preço.")
+        print("\n❌ FALHA! Não foi possível obter as informações.")
+    print("Testando url dinâmica")
+    dynamic_info = get_product_info(dynamic_url)
+    if dynamic_info:
+        print(f"\n✅ SUCESSO! Informações do produto: {dynamic_info}")
+    else:
+        print("\n❌ FALHA! Não foi possível obter as informações.")
