@@ -26,7 +26,5 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
-          URL_PRODUTO: ${{ secrets.URL_PRODUTO }}
-          PRECO_ALVO: ${{ secrets.PRECO_ALVO }}
         run: |
           python main.py
