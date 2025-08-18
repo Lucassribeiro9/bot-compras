@@ -26,7 +26,7 @@ jobs:
         env:
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: |
-          python seedings.py
+          python seeding.py
       - name: Run bot
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
