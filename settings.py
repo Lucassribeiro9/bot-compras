@@ -1,7 +1,12 @@
 # Constantes e configurações do projeto
+from pathlib import Path
 
+# Diretório raiz do projeto
+ROOT_DIR = Path(__file__).parent
 # database
-DB = "products.db"
+DB = ROOT_DIR / "products.db"
+
+JSON_FILE = ROOT_DIR / "products_to_monitor.json"
 
 # Scrapers
 HEADERS = {
