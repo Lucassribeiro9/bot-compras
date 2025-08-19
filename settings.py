@@ -6,7 +6,7 @@ ROOT_DIR = Path(__file__).parent
 # database
 DB = ROOT_DIR / "products.db"
 
-JSON_FILE = ROOT_DIR / "products_to_monitor.json"
+JSON_FILE = ROOT_DIR / "products.json"
 
 # Scrapers
 HEADERS = {
