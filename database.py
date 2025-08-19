@@ -16,10 +16,10 @@ def get_conn():
     return conn
 
 
-def setup_db():
+def setup_db(connection=None):
     """Criando a tabela de produtos caso ela não exista"""
     print("Configurando o banco de dados...")
-    conn = get_conn()
+    conn = connection if connection else get_conn()
     try:
         cursor = conn.cursor()
         cursor.execute(
@@ -41,12 +41,13 @@ def setup_db():
     except sqlite3.Error as e:
         print(f"Erro ao configurar o banco de dados: {e}")
     finally:
-        conn.close()
+        if not connection:
+            conn.close()
 
 
-def add_product(url: str, name: str, target_price: float, chat_id: int):
+def add_product(url: str, name: str, target_price: float, chat_id: int, connection=None):
     """Adiciona um produto ao banco de dados"""
-    conn = get_conn()
+    conn = connection if connection else get_conn()
     try:
         cursor = conn.cursor()
         cursor.execute(
@@ -58,12 +59,13 @@ def add_product(url: str, name: str, target_price: float, chat_id: int):
     except sqlite3.IntegrityError:
         print(f"Erro ao adicionar produto: URL {url} já existente")
     finally:
-        conn.close()
+        if not connection:
+            conn.close()
 
 
-def list_products():
+def list_products(connection=None):
     """Lista todos os produtos do banco de dados"""
-    conn = get_conn()
+    conn = connection if connection else get_conn()
     try:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM products")
@@ -72,12 +74,13 @@ def list_products():
     except sqlite3.Error as e:
         print(f"Erro ao listar produtos: {e}")
     finally:
-        conn.close()
+        if not connection:
+            conn.close()
 
 
-def update_product(product_id: int, new_price: float):
+def update_product(product_id: int, new_price: float, connection=None):
     """Atualiza o preço do produto no banco de dados"""
-    conn = get_conn()
+    conn = connection if connection else get_conn()
     try:
         cursor = conn.cursor()
         now_time = datetime.now()
@@ -89,7 +92,8 @@ def update_product(product_id: int, new_price: float):
     except sqlite3.Error as e:
         print(f"Erro ao atualizar produto: {e}")
     finally:
-        conn.close()
+        if not connection:
+            conn.close()
 
 
 if __name__ == "__main__":
