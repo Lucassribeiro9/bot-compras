@@ -41,6 +41,7 @@ def main():
                 message = (
                     f"🚨 *Alerta de Preço!* 🚨\n\n"
                     f"O produto atingiu o preço desejado!\n\n"
+                    f"Produto: {product_name}\n"
                     f"*Preço Atual: R$ {current_price:.2f}*\n"
                     f"Preço Alvo: R$ {product_target_price:.2f}\n\n"
                     f"Corre pra ver! ➡️ {product_url}"
@@ -51,9 +52,10 @@ def main():
                 print("O preço ainda não atingiu o alvo.")
                 message = (
                     f"O preço ainda não atingiu o alvo.\n\n"
+                    f"Produto: {product_name}\n"
                     f"Preço atual: R${current_price:.2f}\n"
                     f"Preço alvo: R${product_target_price:.2f}\n"
-                    f"Corre pra ver! ➡️ {product_url}"
+                    f"Caso ainda queira conferir, clique no link ➡️ {product_url}"
                 )
                 send_message(message)
                 db.update_product(product_id, current_price)
