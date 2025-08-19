@@ -1,6 +1,6 @@
 import unittest
 
-from webscraper import format_price
+from utils import format_price
 
 
 class TestFormatPrice(unittest.TestCase):
