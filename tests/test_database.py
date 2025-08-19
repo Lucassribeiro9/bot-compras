@@ -1,6 +1,5 @@
 import unittest
 import sqlite3
-from datetime import datetime
 import database as db
 
 
@@ -15,22 +14,15 @@ class TestDatabase(unittest.TestCase):
         self.conn.close()
 
     def test_add_product(self):
-        product = {
-            "url": "http://example.com/product1",
-            "name": "Produto 1",
-            "target_price": 100.0,
-            "chat_id": 123456789,
-            "last_price": None,
-        }
-        db.add_product(connection=self.conn, product=product)
+        db.add_product(url="http://example.com/product1", name="Produto 1", target_price=100.0, chat_id=123456789, connection=self.conn)
         cursor = self.conn.cursor()
-        cursor.execute("SELECT * FROM products WHERE url = ?", (product["url"],))
+        cursor.execute("SELECT * FROM products WHERE url = ?", ("http://example.com/product1",))
         result = cursor.fetchone()
         self.assertIsNotNone(result)
-        self.assertEqual(result["url"], product["url"])
-        self.assertEqual(result["name"], product["name"])
-        self.assertEqual(result["target_price"], product["target_price"])
-        self.assertEqual(result["chat_id"], product["chat_id"])
+        self.assertEqual(result["url"], "http://example.com/product1")
+        self.assertEqual(result["name"], "Produto 1")
+        self.assertEqual(result["target_price"], 100.0)
+        self.assertEqual(result["chat_id"], 123456789)
 
     def test_list_products(self):
         """Testando produtos listados no banco de dados"""
@@ -68,7 +60,7 @@ class TestDatabase(unittest.TestCase):
         )
         product_id = cursor.fetchone()["id"]
 
-        db.update_product(connection=self.conn, product_id=product_id, new_price=100.0)
+        db.update_product(connection=self.conn, product_id=product_id, new_price=150.0)
 
         cursor.execute("SELECT last_price FROM products WHERE id = ?", (product_id,))
         updated_price = cursor.fetchone()["last_price"]
