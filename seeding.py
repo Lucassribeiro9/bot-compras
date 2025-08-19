@@ -3,7 +3,6 @@ import json
 import os
 from database import setup_db, add_product
 from dotenv import load_dotenv
-from settings import JSON_FILE
 
 load_dotenv()
 
@@ -11,21 +10,20 @@ load_dotenv()
 def seed_database():
     """Lê o JSON e popula o banco de dados."""
     print("Iniciando o processo de seeding...")
-
     CHAT_ID = os.getenv("CHAT_ID")
     if not CHAT_ID:
         print("CHAT_ID não encontrado nas variáveis de ambiente.")
         return
     try:
-        with open("JSON_FILE", "r", encoding="utf-8") as file:
+        with open("products.json", "r", encoding="utf-8") as file:
             products = json.load(file)
-            print(f"Arquivo {JSON_FILE} carregado com sucesso.")
+            print(f"Arquivo {products} carregado com sucesso.")
             print(f"Carregando {len(products)} produtos do arquivo JSON...")
     except FileNotFoundError:
-        print(f"Arquivo {JSON_FILE} não encontrado.")
+        print(f"Arquivo {products} não encontrado.")
         return
     except json.JSONDecodeError:
-        print(f"Erro ao decodificar o JSON no arquivo {JSON_FILE}.")
+        print(f"Erro ao decodificar o JSON no arquivo {products}.")
         return
     if not products:
         print("Nenhum produto encontrado no arquivo JSON.")
