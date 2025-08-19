@@ -27,6 +27,12 @@ jobs:
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: |
           python seeding.py
+      - name: Verify database
+        run: |
+          echo "Verificando conteúdo da pasta..."
+          ls -l
+          echo "Verificando conteúdo do banco de dados..."
+          sqlite3 products.db ".schema products;"
       - name: Run bot
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
