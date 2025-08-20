@@ -38,4 +38,9 @@ SITE_CONFIG = {
         "name_selector": ("h1", {"data-testid": "product-name"}),
         "price_selector": ("span", {"data-testid": "main-price"}),
     },
+    "guidodecants.com.br": {
+        "strategy": "dynamic",
+        "name_selector": "h1.product-name",
+        "price_selector": "span.product-price",
+    },
 }
