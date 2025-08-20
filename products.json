@@ -8,5 +8,15 @@
     "url": "https://www.intheboxperfumes.com.br/produto/envoy-100ml-197",
     "name": "Envoy - 100ml",
     "target_price": 140
+  },
+  {
+    "url": "https://guidodecants.com.br/produtos/envoy-ambassador-men-gisada-in-the-box/?variant=854106248",
+    "name": "Envoy - In the Box",
+    "target_price": 20
+  },
+  {
+    "url": "https://guidodecants.com.br/produtos/fire-snake-in-the-box",
+    "name": "Fire Snake - In the Box",
+    "target_price": 20
   }
 ]
