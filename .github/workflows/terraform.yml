@@ -64,13 +64,17 @@ jobs:
         uses: hashicorp/setup-terraform@v2
       - name: "Set OCI Credentials"
         run: |
-          echo "USER_OCID=${{ secrets.USER_OCID }}" >> $GITHUB_ENV
-          echo "TENANCY_OCID=${{ secrets.TENANCY_OCID }}" >> $GITHUB_ENV
-          echo "OCI_FINGERPRINT=${{ secrets.OCI_FINGERPRINT}}" >> $GITHUB_ENV
-          echo "OCI_PRIVATE_KEY=${{ secrets.OCI_PRIVATE_KEY}}" >> $GITHUB_ENV
-          echo "OCI_REGION=${{ secrets.OCI_REGION}}" >> $GITHUB_ENV
+          echo "TF_VAR_USER_OCID=${{ secrets.USER_OCID }}" >> $GITHUB_ENV
+          echo "TF_VAR_TENANCY_OCID=${{ secrets.TENANCY_OCID }}" >> $GITHUB_ENV
+          echo "TF_VAR_OCI_FINGERPRINT=${{ secrets.OCI_FINGERPRINT}}" >> $GITHUB_ENV
+          echo "TF_VAR_OCI_REGION=${{ secrets.OCI_REGION}}" >> $GITHUB_ENV
+          mkdir -p ~/.oci
+          echo "${{ secrets.OCI_PRIVATE_KEY}}" > ~/.oci/oci_api_key.pem
+          chmod 600 ~/.oci/oci_api_key.pem
+          echo "TF_VAR_OCI_PRIVATE_KEY_PATH=~/.oci/oci_api_key.pem" >> $GITHUB_ENV
       - name: "Terraform Init"
         run: terraform init
 
       - name: "Terraform Apply"
+        if: github.ref== 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve tfplan
