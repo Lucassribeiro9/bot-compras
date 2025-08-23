@@ -32,11 +32,11 @@ jobs:
           OCI_REGION: ${{ secrets.OCI_REGION }}
           OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
         run: |
-          echo "USER_OCID=${{ secrets.USER_OCID }}" >> $GITHUB_ENV
-          echo "TENANCY_OCID=${{ secrets.TENANCY_OCID }}" >> $GITHUB_ENV
-          echo "OCI_FINGERPRINT=${{ secrets.OCI_FINGERPRINT}}" >> $GITHUB_ENV
-          echo "OCI_PRIVATE_KEY=${{ secrets.OCI_PRIVATE_KEY}}" >> $GITHUB_ENV
-          echo "OCI_REGION=${{ secrets.OCI_REGION}}" >> $GITHUB_ENV
+          echo "USER_OCID=${{ secrets.USER_OCID }}" 
+          echo "TENANCY_OCID=${{ secrets.TENANCY_OCID }}" 
+          echo "OCI_FINGERPRINT=${{ secrets.OCI_FINGERPRINT}}" 
+          echo "OCI_PRIVATE_KEY=${{ secrets.OCI_PRIVATE_KEY}}" 
+          echo "OCI_REGION=${{ secrets.OCI_REGION}}" 
 
       - name: "Terraform Init"
         run: terraform init
