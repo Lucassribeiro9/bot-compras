@@ -26,7 +26,7 @@ data "oci_core_images" "ubuntu_image" {
   compartment_id           = var.compartment_id
   operating_system         = "Canonical Ubuntu"
   operating_system_version = "22.04"
-  shape                    = var.instance_shape
+  shape                    = "VM.Standard.E2.1.Micro"
   sort_by                  = "TIMECREATED"
   sort_order               = "DESC"
 }
@@ -50,7 +50,7 @@ resource "oci_core_instance" "bot_compras_instance_tf" {
   availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
   compartment_id      = var.compartment_id
   display_name        = "bot-compras-instance-tf"
-  shape               = var.instance_shape
+  shape               = "VM.Standard.E2.1.Micro"
   
   source_details {
     source_type = "image"

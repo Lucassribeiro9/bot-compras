@@ -32,6 +32,7 @@ jobs:
           TF_VAR_tenancy_ocid: ${{ secrets.TENANCY_OCID }}
           TF_VAR_api_fingerprint: ${{ secrets.OCI_FINGERPRINT }}
           TF_VAR_region: ${{ secrets.OCI_REGION }}
+          TF_VAR_compartment_id: ${{ secrets.TENANCY_OCID}}
           TF_VAR_api_private_key_path: ${{ secrets.OCI_PRIVATE_KEY }}
         run: terraform plan
   apply:
@@ -57,5 +58,6 @@ jobs:
           TF_VAR_tenancy_ocid: ${{ secrets.TENANCY_OCID }}
           TF_VAR_api_fingerprint: ${{ secrets.OCI_FINGERPRINT }}
           TF_VAR_region: ${{ secrets.OCI_REGION }}
+          TF_VAR_compartment_id: ${{ secrets.TENANCY_OCID}}
           TF_VAR_api_private_key_path: ${{ secrets.OCI_PRIVATE_KEY }}
         run: terraform apply -auto-approve
