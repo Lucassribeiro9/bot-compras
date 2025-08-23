@@ -1,0 +1,76 @@
+# Arquivo para execução do terraform
+name: Terraform
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  plan:
+    name: "Terraform Plan"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+      # github secrets com as credenciais do OCI
+      - name: "Set OCI Credentials"
+        run: |
+          echo "USER_OCID=${{ secrets.USER_OCID }}" >> $GITHUB_ENV
+          echo "TENANCY_OCID=${{ secrets.TENANCY_OCID }}" >> $GITHUB_ENV
+          echo "OCI_FINGERPRINT=${{ secrets.OCI_FINGERPRINT}}" >> $GITHUB_ENV
+          echo "OCI_PRIVATE_KEY=${{ secrets.OCI_PRIVATE_KEY}}" >> $GITHUB_ENV
+          echo "OCI_REGION=${{ secrets.OCI_REGION}}" >> $GITHUB_ENV
+
+      - name: "Terraform Init"
+        run: terraform init
+
+      - name: "Terraform Plan"
+        id: plan_step
+        run: terraform plan -out=tfplan terraform show tfplan > terraform_plan_output.txt
+
+      - name: "Upload Terraform Plan Artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan
+          path: ./terraform/tfplan
+          retention-days: 1
+
+  apply:
+    name: "Terraform Apply"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    needs: [plan]
+
+    steps:
+      - name: Download Terraform Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: terraform-plan
+          path: ./terraform/tfplan
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+      - name: "Set OCI Credentials"
+        run: |
+          echo "USER_OCID=${{ secrets.USER_OCID }}" >> $GITHUB_ENV
+          echo "TENANCY_OCID=${{ secrets.TENANCY_OCID }}" >> $GITHUB_ENV
+          echo "OCI_FINGERPRINT=${{ secrets.OCI_FINGERPRINT}}" >> $GITHUB_ENV
+          echo "OCI_PRIVATE_KEY=${{ secrets.OCI_PRIVATE_KEY}}" >> $GITHUB_ENV
+          echo "OCI_REGION=${{ secrets.OCI_REGION}}" >> $GITHUB_ENV
+      - name: "Terraform Init"
+        run: terraform init
+
+      - name: "Terraform Apply"
+        run: terraform apply -auto-approve tfplan
