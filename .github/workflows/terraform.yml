@@ -25,6 +25,12 @@ jobs:
         uses: hashicorp/setup-terraform@v2
       # github secrets com as credenciais do OCI
       - name: "Set OCI Credentials"
+        env:
+          USER_OCID: ${{ secrets.USER_OCID }}
+          TENANCY_OCID: ${{ secrets.TENANCY_OCID }}
+          OCI_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
+          OCI_REGION: ${{ secrets.OCI_REGION }}
+          OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
         run: |
           echo "USER_OCID=${{ secrets.USER_OCID }}" >> $GITHUB_ENV
           echo "TENANCY_OCID=${{ secrets.TENANCY_OCID }}" >> $GITHUB_ENV
