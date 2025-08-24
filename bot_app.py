@@ -91,3 +91,20 @@ async def remove(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         logging.error(f"Erro ao remover produto: {e}")
         await update.message.reply_text("Ocorreu um erro ao remover o produto. Tente novamente.")
+
+def main():
+    """Inicia o bot"""
+    db.setup_db()
+    application = Application.builder().token(TOKEN).build()
+    if not application:
+        raise ValueError("Erro ao iniciar o bot. Verifique o TOKEN e a conexão com a internet.")
+    # Comandos do bot
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("add", add))
+    application.add_handler(CommandHandler("list", list_products))
+    application.add_handler(CommandHandler("remove", remove))
+
+    print("Bot iniciado com sucesso! Aguardando comandos...")
+    application.run_polling()
+if __name__ == "__main__":
+    main()
