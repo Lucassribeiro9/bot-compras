@@ -76,3 +76,18 @@ async def list_products(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         logging.error(f"Erro ao listar produtos: {e}")
         await update.message.reply_text("Ocorreu um erro ao listar os produtos. Tente novamente.")
+
+async def remove(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Remove um produto da lista"""
+    try:
+        product_id = int(context.args[0])
+        success = db.remove_product(product_id)
+        if success:
+            await update.message.reply_text(f"Produto com ID {product_id} removido com sucesso.")
+        else:
+            await update.message.reply_text(f"Produto com ID {product_id} não encontrado. Tente novamente!")
+    except (IndexError, ValueError):
+        await update.message.reply_text("Formato inválido. Use: /remove <ID do Produto>")
+    except Exception as e:
+        logging.error(f"Erro ao remover produto: {e}")
+        await update.message.reply_text("Ocorreu um erro ao remover o produto. Tente novamente.")
