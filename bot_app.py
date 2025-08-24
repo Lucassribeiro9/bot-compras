@@ -55,3 +55,24 @@ async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         logging.error(f"Erro ao adicionar produto: {e}")
         await update.message.reply_text("Ocorreu um erro ao adicionar o produto. Tente novamente.")
+async def list_products(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Lista os produtos monitorados"""
+    chat_id = update.effective_chat.id
+    try:
+        products = db.list_products(chat_id)
+        if not products:
+            await update.message.reply_text("Nenhum produto encontrado na sua lista.")
+            return
+        message = "Produtos monitorados:\n"
+        for product in products:
+            message += (
+                f"ID: {product['id']}\n"
+                f"Nome: {product['name']}\n"
+                f"URL: {product['url']}\n"
+                f"Preço Alvo: R$ {product['target_price']:.2f}\n"
+                f"Último Preço: R$ {product['last_price']:.2f}\n\n"
+            )
+        await update.message.reply_text(message)
+    except Exception as e:
+        logging.error(f"Erro ao listar produtos: {e}")
+        await update.message.reply_text("Ocorreu um erro ao listar os produtos. Tente novamente.")
