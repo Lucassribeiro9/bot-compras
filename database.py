@@ -95,7 +95,24 @@ def update_product(product_id: int, new_price: float, connection=None):
         if not connection:
             conn.close()
 
-
+def remove_product(product_id: int, connection=None):
+    """Remove um produto do banco de dados"""
+    conn = connection if connection else get_conn()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM products WHERE id = ?", (product_id,))
+        conn.commit()
+        if cursor.rowcount == 0:
+            print(f"Nenhum produto encontrado com ID {product_id}")
+            return False
+        print(f"Produto com ID {product_id} removido com sucesso")
+        return True
+    except sqlite3.Error as e:
+        print(f"Erro ao remover produto: {e}")
+        return False
+    finally:
+        if not connection:
+            conn.close()
 if __name__ == "__main__":
     setup_db()
     print("Adicionando produtos de teste...")
