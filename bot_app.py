@@ -3,6 +3,7 @@ import os
 import logging
 import database as db
 from scrapers import webscraper
+from utils import format_price
 from settings import SITE_CONFIG
 from dotenv import load_dotenv
 from telegram import Update
@@ -10,7 +11,7 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 
 load_dotenv()
 
-TOKEN = os.getenv("TOKEN")
+TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
     raise ValueError("TOKEN de acesso ao bot não encontrado nas variáveis de ambiente.")
 # Configuração de log
@@ -38,7 +39,8 @@ async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     try:
         url = context.args[0]
-        target_price = float(context.args[1])
+        target_price_str = context.args[1]
+        target_price = format_price(target_price_str)
         await update.message.reply_text("Buscando as informações do produto, aguarde...")
         # Busca o nome
         info = webscraper.get_product_info(url)
@@ -57,9 +59,8 @@ async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Ocorreu um erro ao adicionar o produto. Tente novamente.")
 async def list_products(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Lista os produtos monitorados"""
-    chat_id = update.effective_chat.id
     try:
-        products = db.list_products(chat_id)
+        products = db.list_products()
         if not products:
             await update.message.reply_text("Nenhum produto encontrado na sua lista.")
             return
