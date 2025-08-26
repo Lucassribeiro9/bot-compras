@@ -3,7 +3,7 @@ import re
 
 
 # formatando preço
-def format_price(price: str) -> float:
+def format_price(price: str) -> float | None:
     # Recebe um preço e tenta extrair o valor numérico dele.
     if not price:
         return None
