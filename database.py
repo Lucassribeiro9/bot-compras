@@ -55,7 +55,7 @@ def add_product(url: str, name: str, target_price: float, chat_id: int, connecti
             (url, name, target_price, chat_id),
         )
         conn.commit()
-        print(f"Produto adicionado: {url}")
+        print(f"Produto adicionado: {name}")
     except sqlite3.IntegrityError:
         print(f"Erro ao adicionar produto: URL {url} já existente")
     finally:
