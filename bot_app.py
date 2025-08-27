@@ -50,7 +50,7 @@ async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
         product_name = info["name"]
 
         # Adiciona o produto ao banco de dados
-        db.add_product(chat_id, product_name, url, target_price)
+        db.add_product(url, product_name, target_price, chat_id)
         await update.message.reply_text(f"Produto '{product_name}' adicionado com sucesso! Valor alvo: R$ {target_price:.2f}")
     except (IndexError, ValueError):
         await update.message.reply_text("Formato inválido. Use: /add <URL> <Preço Alvo>")
@@ -66,14 +66,16 @@ async def list_products(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
         message = "Produtos monitorados:\n"
         for product in products:
+            target_price_str = format_price(product['target_price'])
+            last_price_str = format_price(product['last_price']) if product['last_price'] is not None else "N/A"
             message += (
                 f"ID: {product['id']}\n"
                 f"Nome: {product['name']}\n"
-                f"URL: {product['url']}\n"
-                f"Preço Alvo: R$ {product['target_price']:.2f}\n"
-                f"Último Preço: R$ {product['last_price']:.2f}\n\n"
+                f"Preço Alvo: {target_price_str}\n"
+                f"Último Preço: {last_price_str}\n"
+                f"Link: {product['url']}\n\n"
             )
-        await update.message.reply_text(message)
+        await update.message.reply_text(message, disable_web_page_preview=True, parse_mode='Markdown')
     except Exception as e:
         logging.error(f"Erro ao listar produtos: {e}")
         await update.message.reply_text("Ocorreu um erro ao listar os produtos. Tente novamente.")
