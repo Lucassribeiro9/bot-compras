@@ -21,3 +21,13 @@ services:
     # Volumes para persistência de dados
     volumes:
       - .:/app
+  # bot 24/7
+  bot-compras2:
+    build: .
+    image: ${USER_DOCKERHUB}/bot-compras:latest
+    container_name: bot-compras-interactive
+    env_file: .env
+    restart: always
+    command: ["python", "-u", "bot_app.py"]
+    volumes:
+      - ./products.db:/app/products.db
