@@ -3,7 +3,7 @@ import os
 from settings import DB
 from datetime import datetime
 from dotenv import load_dotenv
-
+from logger import logger
 load_dotenv()
 
 CHAT_ID = os.getenv("CHAT_ID")
@@ -18,7 +18,7 @@ def get_conn():
 
 def setup_db(connection=None):
     """Criando a tabela de produtos caso ela não exista"""
-    print("Configurando o banco de dados...")
+    logger.info("Configurando o banco de dados...")
     conn = connection if connection else get_conn()
     try:
         cursor = conn.cursor()
@@ -37,9 +37,9 @@ def setup_db(connection=None):
         """
         )
         conn.commit()
-        print("Banco de dados configurado com sucesso!")
+        logger.info("Banco de dados configurado com sucesso.")
     except sqlite3.Error as e:
-        print(f"Erro ao configurar o banco de dados: {e}")
+        logger.error(f"Erro ao configurar o banco de dados: {e}")
     finally:
         if not connection:
             conn.close()
@@ -55,9 +55,9 @@ def add_product(url: str, name: str, target_price: float, chat_id: int, connecti
             (url, name, target_price, chat_id),
         )
         conn.commit()
-        print(f"Produto adicionado: {name}")
+        logger.info(f"Produto adicionado: {name}")
     except sqlite3.IntegrityError:
-        print(f"Erro ao adicionar produto: URL {url} já existente")
+        logger.error(f"Erro ao adicionar produto: URL {url} já existente")
     finally:
         if not connection:
             conn.close()
@@ -72,7 +72,7 @@ def list_products(connection=None):
         products = cursor.fetchall()
         return products
     except sqlite3.Error as e:
-        print(f"Erro ao listar produtos: {e}")
+        logger.error(f"Erro ao listar produtos: {e}")
     finally:
         if not connection:
             conn.close()
@@ -90,7 +90,7 @@ def update_product(product_id: int, new_price: float, connection=None):
         )
         conn.commit()
     except sqlite3.Error as e:
-        print(f"Erro ao atualizar produto: {e}")
+        logger.error(f"Erro ao atualizar produto: {e}")
     finally:
         if not connection:
             conn.close()
@@ -103,12 +103,12 @@ def remove_product(product_id: int, connection=None):
         cursor.execute("DELETE FROM products WHERE id = ?", (product_id,))
         conn.commit()
         if cursor.rowcount == 0:
-            print(f"Nenhum produto encontrado com ID {product_id}")
+            logger.info(f"Nenhum produto encontrado com ID {product_id}")
             return False
-        print(f"Produto com ID {product_id} removido com sucesso")
+        logger.info(f"Produto com ID {product_id} removido com sucesso")
         return True
     except sqlite3.Error as e:
-        print(f"Erro ao remover produto: {e}")
+        logger.error(f"Erro ao remover produto: {e}")
         return False
     finally:
         if not connection:
