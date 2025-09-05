@@ -16,18 +16,20 @@ services:
     image: ${USER_DOCKERHUB}/bot-compras:latest
     # Nome do container
     container_name: bot-compras
+    # Reinicia o container automaticamente em caso de falha
+    restart: always
     # Arquivo .env
     env_file: .env
+    # Configuração de logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m" # Tamanho máximo do arquivo de log - 10MB
+        max-file: "3" # Mantém os 3 últimos arquivos de log
     # Volumes para persistência de dados
     volumes:
-      - .:/app
-  # bot 24/7
-  bot-compras2:
-    build: .
-    image: ${USER_DOCKERHUB}/bot-compras:latest
-    container_name: bot-compras-interactive
-    env_file: .env
-    restart: always
-    command: ["python", "-u", "bot_app.py"]
-    volumes:
       - ./products.db:/app/products.db
+      - ./debug.log:/app/debug.log
+
+    # Comando para rodar o bot
+    command: ["python", "-u", "bot_app.py"]
