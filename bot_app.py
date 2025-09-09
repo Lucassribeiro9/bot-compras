@@ -1,6 +1,7 @@
 # Script que vai fazer o bot rodar 24/7
 import os
 import logging
+import asyncio
 import database as db
 from scrapers import webscraper
 from utils import format_price_str, format_price
@@ -27,6 +28,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/add <URL> <Preço Alvo> - Adiciona um produto\n"
         "/list - Lista todos os produtos\n"
         "/remove <ID do Produto> - Remove um produto da lista.\n"
+        "/check - Verifica os preços dos produtos agora.\n\n"
+        "Exemplo: /add https://www.example.com/produto 199.99"
     )
     await update.message.reply_text(welcome_message)
 
@@ -133,8 +136,51 @@ async def remove(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             "Ocorreu um erro ao remover o produto. Tente novamente."
         )
+async def check_prices(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Verifica os preços dos produtos de maneira agendada. Verificará todos os produtos no banco de dados."""
+    logger.info("Iniciando verificação de preços...")
+    all_products = await asyncio.to_thread(db.list_products)
+    if not all_products:
+        logger.info("Nenhum produto encontrado no banco de dados.")
+        return
+    for product in all_products:
+        try:
+            product_id = product["id"]
+            product_url = product["url"]
+            product_name = product["name"]
+            product_target_price = product["target_price"]
 
+            logger.info(f"Verificando preço do produto: {product_name}")
+            product_info = await asyncio.to_thread(webscraper.get_product_info(product_url))
+            if product_info is None:
+                logger.warning(f"Não foi possível obter o preço do produto: {product_name}")
+                db.update_product(product_id, product["last_price"])
+                continue
+            current_price = product_info["price"]
+            logger.info(
+                f"Preço atual do produto: {product_name}: {current_price}"
+            )
+            if current_price <= product_target_price:
+                message = (
+                    f"🚨 *Alerta de Preço!* 🚨\n\n"
+                    f"O produto atingiu o preço desejado!\n\n"
+                    f"Produto: {product_name}\n"
+                    f"*Preço Atual: R$ {current_price:.2f}*\n"
+                    f"Preço Alvo: R$ {product_target_price:.2f}\n\n"
+                    f"Corre pra ver! ➡️ {product_url}"
+                )
+                await update.message.reply_text(message, parse_mode="Markdown")
+                db.update_product(product_id, current_price)
+        except Exception as e:
+            logger.error(f"Erro ao verificar preço do produto: {product_name}")
+            logger.error(f"Erro: {e}")
+    logger.info("Verificação de preços concluída.")
 
+async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Comando para verificar os preços dos produtos imediatamente."""
+    await update.message.reply_text("Iniciando verificação de preços...")
+    await check_prices(update, context)
+    await update.message.reply_text("Verificação de preços concluída.")
 def main():
     """Inicia o bot"""
     db.setup_db()
@@ -148,6 +194,11 @@ def main():
     application.add_handler(CommandHandler("add", add))
     application.add_handler(CommandHandler("list", list_products))
     application.add_handler(CommandHandler("remove", remove))
+    application.add_handler(CommandHandler("check", check_command))
+
+    # Agendamento da tarefa
+    job_queue = application.job_queue
+    job_queue.run_repeating(check_prices, interval=3600, first=10)
 
     logger.info("Bot iniciado com sucesso.")
     application.run_polling()
