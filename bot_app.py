@@ -151,7 +151,7 @@ async def check_prices(update: Update, context: ContextTypes.DEFAULT_TYPE):
             product_target_price = product["target_price"]
 
             logger.info(f"Verificando preço do produto: {product_name}")
-            product_info = await asyncio.to_thread(webscraper.get_product_info(product_url))
+            product_info = await asyncio.to_thread(webscraper.get_product_info, product_url)
             if product_info is None:
                 logger.warning(f"Não foi possível obter o preço do produto: {product_name}")
                 db.update_product(product_id, product["last_price"])
@@ -160,6 +160,8 @@ async def check_prices(update: Update, context: ContextTypes.DEFAULT_TYPE):
             logger.info(
                 f"Preço atual do produto: {product_name}: {current_price}"
             )
+            # Atualizando o preço do produto no banco de dados
+            await asyncio.to_thread(db.update_product, product_id, current_price)
             if current_price <= product_target_price:
                 message = (
                     f"🚨 *Alerta de Preço!* 🚨\n\n"
