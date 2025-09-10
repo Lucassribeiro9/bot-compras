@@ -31,7 +31,7 @@ data "oci_core_images" "ubuntu_image" {
   sort_order               = "DESC"
 }
 
-
+# cria a vpc
 resource "oci_core_vcn" "bot_compras_vcn_tf" {
   compartment_id = var.compartment_id
   display_name   = "bot-compras-vcn"
@@ -57,13 +57,34 @@ resource "oci_core_security_list" "bot_security_list" {
     destination = "0.0.0.0/0"
   }
 }
+# cria o gateway
+resource "oci_core_internet_gateway" "bot_compras_ig_tf" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.bot_compras_vcn_tf.id
+  display_name   = "bot-compras-ig"
+  enabled = true
+}
 
+# cria a tabela de rotas
+resource "oci_core_route_table" "bot_compras_rt_tf" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.bot_compras_vcn_tf.id
+  display_name   = "bot-compras-rt"
+  route_rules {
+    destination = "0.0.0.0/0"
+    network_entity_id = oci_core_internet_gateway.bot_compras_ig_tf.id
+  }
+
+}
+
+# cria a subnet
 resource "oci_core_subnet" "bot_compras_subnet_tf" {
   compartment_id = var.compartment_id
   vcn_id         = oci_core_vcn.bot_compras_vcn_tf.id
   display_name   = "bot-compras-subnet"
   cidr_block     = "10.0.1.0/24"
   security_list_ids = [oci_core_security_list.bot_security_list.id]
+  route_table_id = oci_core_route_table.bot_compras_rt_tf.id
 }
 
 
