@@ -38,6 +38,26 @@ resource "oci_core_vcn" "bot_compras_vcn_tf" {
   cidr_block     = "10.0.0.0/16"
 }
 
+# security list
+resource "oci_core_security_list" "bot_security_list" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.bot_compras_vcn_tf.id
+  display_name   = "bot-security-list"
+  # Regras de entrada
+  ingress_security_rules {
+    protocol = "6"   #TCP
+    source   = "0.0.0.0/0"
+    tcp_options {
+      min = 22
+      max = 22  
+    }    
+  }
+  egress_security_rules {
+    protocol = "all"
+    destination = "0.0.0.0/0"
+  }
+}
+
 resource "oci_core_subnet" "bot_compras_subnet_tf" {
   compartment_id = var.compartment_id
   vcn_id         = oci_core_vcn.bot_compras_vcn_tf.id
