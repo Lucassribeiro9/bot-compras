@@ -1,105 +1,106 @@
-# main.tf
-
+# mudando para aws
 terraform {
   required_providers {
-    oci = {
-      source  = "oracle/oci"
-      version = "~> 5.0"
+    aws = {
+      source = "hashicorp/aws"
+      version = "6.13.0"
     }
   }
 }
 
-provider "oci" {
-  tenancy_ocid     = var.tenancy_ocid
-  user_ocid        = var.user_ocid
-  fingerprint      = var.api_fingerprint
-  private_key      = var.api_private_key_content != null ? var.api_private_key_content : file(var.api_private_key_path)
-  region           = var.region
+provider "aws" {
+  # Configuração do provedor AWS
+  region = "us-east-1"
 }
-
-
-data "oci_identity_availability_domains" "ads" {
-  compartment_id = var.tenancy_ocid
-}
-
-data "oci_core_images" "ubuntu_image" {
-  compartment_id           = var.compartment_id
-  operating_system         = "Canonical Ubuntu"
-  operating_system_version = "22.04"
-  shape                    = "VM.Standard.E2.1.Micro"
-  sort_by                  = "TIMECREATED"
-  sort_order               = "DESC"
-}
-
-# cria a vpc
-resource "oci_core_vcn" "bot_compras_vcn_tf" {
-  compartment_id = var.compartment_id
-  display_name   = "bot-compras-vcn"
-  cidr_block     = "10.0.0.0/16"
-}
-
-# security list
-resource "oci_core_security_list" "bot_security_list" {
-  compartment_id = var.compartment_id
-  vcn_id         = oci_core_vcn.bot_compras_vcn_tf.id
-  display_name   = "bot-security-list"
-  # Regras de entrada
-  ingress_security_rules {
-    protocol = "6"   #TCP
-    source   = "0.0.0.0/0"
-    tcp_options {
-      min = 22
-      max = 22  
-    }    
-  }
-  egress_security_rules {
-    protocol = "all"
-    destination = "0.0.0.0/0"
+# ----- Criando VPC -----
+resource "aws_vpc" "bot_vpc" {
+  cidr_block = "10.0.0.0/16"
+  tags = {
+    Name = "bot_vpc"
+    Description = "VPC para a infra do bot"
   }
 }
-# cria o gateway
-resource "oci_core_internet_gateway" "bot_compras_ig_tf" {
-  compartment_id = var.compartment_id
-  vcn_id         = oci_core_vcn.bot_compras_vcn_tf.id
-  display_name   = "bot-compras-ig"
-  enabled = true
-}
-
-# cria a tabela de rotas
-resource "oci_core_route_table" "bot_compras_rt_tf" {
-  compartment_id = var.compartment_id
-  vcn_id         = oci_core_vcn.bot_compras_vcn_tf.id
-  display_name   = "bot-compras-rt"
-  route_rules {
-    destination = "0.0.0.0/0"
-    network_entity_id = oci_core_internet_gateway.bot_compras_ig_tf.id
+resource "aws_subnet" "bot_subnet" {
+  vpc_id            = aws_vpc.bot_vpc.id
+  cidr_block        = "10.0.1.0/24"
+  tags = {
+    Name = "bot_subnet"
+    Description = "Subnet para a infra do bot"
   }
-
 }
-
-# cria a subnet
-resource "oci_core_subnet" "bot_compras_subnet_tf" {
-  compartment_id = var.compartment_id
-  vcn_id         = oci_core_vcn.bot_compras_vcn_tf.id
-  display_name   = "bot-compras-subnet"
-  cidr_block     = "10.0.1.0/24"
-  security_list_ids = [oci_core_security_list.bot_security_list.id]
-  route_table_id = oci_core_route_table.bot_compras_rt_tf.id
+resource "aws_internet_gateway" "bot_igw" {
+  vpc_id = aws_vpc.bot_vpc.id
+  tags = {
+    Name = "bot_igw"
+    Description = "Internet Gateway para a infra do bot"
+  }
 }
-
-
-resource "oci_core_instance" "bot_compras_instance_tf" {
-  availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
-  compartment_id      = var.compartment_id
-  display_name        = "bot-compras-instance-tf"
-  shape               = "VM.Standard.E2.1.Micro"
-  
-  source_details {
-    source_type = "image"
-    source_id   = data.oci_core_images.ubuntu_image.images[0].id
-  }   
-
-  create_vnic_details {
-    subnet_id = oci_core_subnet.bot_compras_subnet_tf.id
+resource "aws_route_table" "bot_route_table" {
+  vpc_id = aws_vpc.bot_vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.bot_igw.id
+  }
+  tags = {
+    Name = "bot_route_table"
+    Description = "Route Table para a infra do bot"
+  }
+}
+resource "aws_route_table_association" "bot_route_table_association" {
+  subnet_id      = aws_subnet.bot_subnet.id
+  route_table_id = aws_route_table.bot_route_table.id
+}
+resource "aws_security_group" "bot_sg" {
+  vpc_id = aws_vpc.bot_vpc.id
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name = "bot_sg"
+    Description = "Security Group para a infra do bot"
+  }
+}
+# ----- Criando Key Pair -----
+resource "aws_key_pair" "bot_key_pair" {
+  key_name   = "bot_key_pair"
+  public_key = file("~/.ssh/id_rsa.pub") # Caminho para a sua chave pública
+}
+# ----- Criando EC2 -----
+resource "aws_instance" "bot_ec2" {
+  ami           = "ami-0360c520857e3138f" # Amazon Linux 2 AMI (HVM), SSD Volume Type
+  instance_type = "t3.micro"
+  key_name      = aws_key_pair.bot_key_pair.key_name
+  subnet_id     = aws_subnet.bot_subnet.id
+  associate_public_ip_address = true
+  vpc_security_group_ids = [aws_security_group.bot_sg.id]
+  user_data = <<-EOF
+              #!/bin/bash
+              # Atualizar sistema
+              sudo yum update -y
+              
+              # Instalar Docker
+              sudo amazon-linux-extras install docker -y
+              sudo service docker start
+              sudo usermod -a -G docker ec2-user
+              
+              # Instalar Docker Compose
+              sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+              sudo chmod +x /usr/local/bin/docker-compose
+              
+              # Instalar Git
+              sudo yum install git -y
+              EOF
+  tags = {
+    Name = "bot_ec2"
+    Description = "Instância EC2 para rodar o bot"
   }
 }
