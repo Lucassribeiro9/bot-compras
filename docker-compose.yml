@@ -27,9 +27,10 @@ services:
         max-size: "10m" # Tamanho máximo do arquivo de log - 10MB
         max-file: "3" # Mantém os 3 últimos arquivos de log
     # Volumes para persistência de dados
+    user: "${UID}:${GID}" # Define usuário e grupo com base nas variáveis de ambiente, evitando problemas de permissão
     volumes:
       - ./products.db:/app/products.db
       - ./debug.log:/app/debug.log
 
-    # Comando para rodar o bot
-    command: ["python", "-u", "bot_app.py"]
+    # Comando para rodar o bot e criar arquivo de log
+    command: sh -c "touch /app/debug.log && python -u bot_app.py"
