@@ -30,25 +30,40 @@ class TestBotCommand(unittest.IsolatedAsyncioTestCase):
         print("Iniciando teste do comando /list")
         # Configura o mock para retornar uma lista de produtos
         mock_list_products.return_value = [
-            {'Id': 1, 'name': 'Produto A', 'url': 'https://example.com/a', 'target_price': 100.0, 'last_price': 50},
-            {'Id': 2, 'name': 'Produto B', 'url': 'https://example.com/b', 'target_price': 200.0, 'last_price': 250}
+            {
+                "id": 1,
+                "name": "Produto A",
+                "url": "https://example.com/a",
+                "target_price": 100.0,
+                "last_price": 95.0,
+            },
+            {
+                "id": 2,
+                "name": "Produto B",
+                "url": "https://example.com/b",
+                "target_price": 200.0,
+                "last_price": 250.00,
+            },
         ]
         mock_update = MagicMock()
-        mock_update.effective_chat.id = 12345
         mock_update.message.reply_text = AsyncMock()
         mock_context = MagicMock()
         await bot_app.list_products(mock_update, mock_context)
         # Verificando se o método foi chamado com o argumento correto
-        mock_list_products.assert_called_with(12345)
         mock_update.message.reply_text.assert_called_once()
         # Pega o texto usado na função
         call_args = mock_update.message.reply_text.call_args
         replied_text = call_args.args[0]
 
+        self.assertIn("Produtos monitorados:", replied_text)
         self.assertIn("ID: 1", replied_text)
-        self.assertIn("Produto A", replied_text)
-        self.assertIn("Último preço: N/A", replied_text)
+        self.assertIn("Nome: Produto A", replied_text)
+        self.assertIn("Preço Alvo: R$ 100,00", replied_text)
+        self.assertIn("Último Preço: R$ 95,00", replied_text)
+        self.assertIn("Link: https://example.com/a", replied_text)
 
         self.assertIn("ID: 2", replied_text)
-        self.assertIn("Produto B", replied_text)
-        self.assertIn("Último preço: 250", replied_text)
+        self.assertIn("Nome: Produto B", replied_text)
+        self.assertIn("Preço Alvo: R$ 200,00", replied_text)
+        self.assertIn("Último Preço: R$ 250,00", replied_text)
+        self.assertIn("Link: https://example.com/b", replied_text)
